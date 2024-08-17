@@ -1,49 +1,54 @@
+const PAGE_SIZE = 50
+const UNTAGGED = 'untagged'
+const INBOX_QUERY = 'is:inbox'
+
 function tagEmail() {
-  const PAGE_SIZE = 50;
-  let start = 0;
-  let untaggedMails;
-  const myTags = GmailApp.getUserLabels();
-  const tags = myTags.reduce((obj, tag) => ({...obj, [tag.getName()]: tag}), {});
-  const untaggedLabel = tags["Untagged"];
+  let start = 0
+  const tags = getTags()
 
   do {
-    untaggedMails = GmailApp.search('label:Untagged', start, PAGE_SIZE);
-    untaggedMails.forEach(thread => processThread(thread, tags, untaggedLabel));
-    start += PAGE_SIZE;
-  } while (untaggedMails.length === PAGE_SIZE);
+    const inboxMails = GmailApp.search(INBOX_QUERY, start, PAGE_SIZE)
+    inboxMails.forEach((thread) => processThread(thread, tags))
+    start += PAGE_SIZE
+  } while (inboxMails.length === PAGE_SIZE)
 }
 
-function processThread(thread, tags, untaggedLabel) {
+function processThread(thread, tags) {
   try {
-    const destinatary = thread.getMessages()[0].getTo();
-    const subaddress = getSubadress(destinatary)
-    if (!subaddress) 
-      return null
-    
-    const tag = getOrCreateTag(tags, subaddress)
-    thread.addLabel(tag);
-    if (untaggedLabel)
-      thread.removeLabel(untaggedLabel)
+    const destinatary = thread.getMessages()[0].getTo()
+    const subaddress = getSubaddress(destinatary)
 
+    thread.addLabel(getOrCreateTag(tags, subaddress))
+    thread.moveToArchive()
+    console.log(
+      `Tagged email: ${thread.getFirstMessageSubject()} with ${subaddress}`
+    )
   } catch (error) {
     console.error(`Failed to tag email: ${error}`)
   }
 }
 
-function getSubadress(email) {
-  const match = email.match(/(\+)(.*)(@)/);
-  return match ? match[2] : null;
+function getTags() {
+  return GmailApp.getUserLabels().reduce((obj, tag) => {
+    obj[tag.getName()] = tag
+    return obj
+  }, {})
+}
+
+function getSubaddress(email) {
+  const match = email.match(/\+([^\@]*)@/)
+  return match ? match[1] : UNTAGGED
 }
 
 function getOrCreateTag(tags, subaddress) {
-  let tag = tags[subaddress];
-  if (!tag && !tags.hasOwnProperty(subaddress)) {
+  if (!tags.hasOwnProperty(subaddress)) {
     try {
-      tag = GmailApp.createLabel(subaddress);
-      tags[subaddress] = tag;
+      const tag = GmailApp.createLabel(subaddress)
+      console.log(`Created label: ${subaddress}`)
+      tags[subaddress] = tag
     } catch (error) {
       console.error(`Failed to create label: ${error}`)
     }
   }
-  return tag
+  return tags[subaddress]
 }
