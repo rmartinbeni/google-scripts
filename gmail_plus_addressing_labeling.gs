@@ -16,7 +16,7 @@ function tagEmail() {
 function processThread(thread, tags) {
   try {
     const destinatary = thread.getMessages()[0].getTo()
-    const subaddress = getSubaddress(destinatary) || UNTAGGED
+    const subaddress = getSubaddress(destinatary)
 
     thread.addLabel(getOrCreateTag(tags, subaddress))
     thread.moveToArchive()
@@ -37,7 +37,7 @@ function getTags() {
 
 function getSubaddress(email) {
   const match = email.match(/\+([^\@]*)@/)
-  return match ? match[1] : null
+  return match ? match[1] : UNTAGGED
 }
 
 function getOrCreateTag(tags, subaddress) {
