@@ -4,10 +4,11 @@ const INBOX_QUERY = 'is:inbox'
 
 function tagEmail() {
   let start = 0
+  let inboxMails = null
   const tags = getTags()
 
   do {
-    const inboxMails = GmailApp.search(INBOX_QUERY, start, PAGE_SIZE)
+    inboxMails = GmailApp.search(INBOX_QUERY, start, PAGE_SIZE)
     inboxMails.forEach((thread) => processThread(thread, tags))
     start += PAGE_SIZE
   } while (inboxMails.length === PAGE_SIZE)
