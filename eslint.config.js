@@ -15,8 +15,8 @@ export default [
   {
     files: ['**/*.js'],
     rules: {
-      'no-unused-vars': 'warn',
-      'no-undef': 'warn',
+      'no-unused-vars': 'off',
+      'no-undef': 'off',
     },
     plugins: {
       googleappsscript: googleappsscript,
