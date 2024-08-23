@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 function onOpen() {
   var ui = SpreadsheetApp.getUi()
   ui.createMenu('Drive Manager')
@@ -16,8 +15,7 @@ function listFilesInDrive() {
     addHeaders(dataSheet)
     addDataToSheet(dataSheet, files)
     Logger.log(
-      'El script se ha completado con éxito. Puedes ver los resultados en la hoja de cálculo: ' +
-        sheet.getUrl()
+      `El script se ha completado con éxito. Puedes ver los resultados en la hoja de cálculo: ${sheet.getUrl()}`
     )
   } catch (e) {
     Logger.log('Error: ' + e.message)
@@ -63,15 +61,7 @@ function clearSheet(sheet) {
 }
 
 function addHeaders(sheet) {
-  var headers = [
-    'Id',
-    'Nombre del Archivo',
-    'Última Modificación',
-    'Carpeta',
-    'Compartido',
-    'Tamaño',
-    'Acciones',
-  ]
+  var headers = ['Id', 'Nombre del Archivo', 'Última Modificación', 'Carpeta', 'Compartido', 'Tamaño', 'Acciones']
   sheet.appendRow(headers)
 
   var headerRange = sheet.getRange(1, 1, 1, headers.length)
@@ -83,22 +73,12 @@ function addHeaders(sheet) {
 
 function addDataToSheet(sheet, files) {
   var data = files.map(function (file) {
-    return [
-      file.id,
-      file.name,
-      file.lastUpdated,
-      file.folder,
-      file.shared,
-      file.size,
-      '',
-    ]
+    return [file.id, file.name, file.lastUpdated, file.folder, file.shared, file.size, '']
   })
   sheet.getRange(2, 1, data.length, 7).setValues(data)
 
   var actionRange = sheet.getRange(2, 7, data.length)
-  var rule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(['Eliminar', 'Ver Detalles'], true)
-    .build()
+  var rule = SpreadsheetApp.newDataValidation().requireValueInList(['Eliminar', 'Ver Detalles'], true).build()
   actionRange.setDataValidation(rule)
 }
 
@@ -108,7 +88,7 @@ function deleteFile(fileId) {
     var ui = SpreadsheetApp.getUi()
     var response = ui.alert(
       'Confirmación',
-      '¿Estás seguro de que deseas eliminar el archivo ' + file.getName() + '?',
+      `¿Estás seguro de que deseas eliminar el archivo ${file.getName()} ?`,
       ui.ButtonSet.YES_NO
     )
 
@@ -138,14 +118,12 @@ function deleteMarkedFiles() {
     }
   }
 
-  Logger.log('Archivos a eliminar: ' + filesToDelete.join(', '))
+  Logger.log(`Archivos a eliminar: ${filesToDelete.join(', ')}`)
 
   if (filesToDelete.length > 0) {
     var response = ui.alert(
       'Confirmación',
-      '¿Estás seguro de que deseas eliminar ' +
-        filesToDelete.length +
-        ' archivos?',
+      `¿Estás seguro de que deseas eliminar ${filesToDelete.length} archivos?`,
       ui.ButtonSet.YES_NO
     )
 
@@ -153,10 +131,10 @@ function deleteMarkedFiles() {
       filesToDelete.forEach(function (fileId) {
         try {
           var file = DriveApp.getFileById(fileId)
-          Logger.log('Eliminando archivo: ' + fileId)
+          Logger.log(`Eliminando archivo: ${fileId}`)
           file.setTrashed(true)
         } catch (e) {
-          Logger.log('Error al eliminar archivo ' + fileId + ': ' + e.message)
+          Logger.log(`Error al eliminar archivo ${fileId}: ${e.message}`)
         }
       })
       Logger.log('Archivos eliminados con éxito.')
