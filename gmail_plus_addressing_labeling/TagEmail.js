@@ -2,6 +2,7 @@ const PAGE_SIZE = 50
 const UNTAGGED = 'untagged'
 const INBOX_QUERY = 'is:inbox'
 
+// eslint-disable-next-line no-unused-vars
 function tagEmail() {
   let start = 0
   let inboxMails = null
@@ -37,12 +38,12 @@ function getTags() {
 }
 
 function getSubaddress(email) {
-  const match = email.match(/\+([^\@]*)@/)
+  const match = email.match(/\+([^@]*)@/)
   return match ? match[1] : UNTAGGED
 }
 
 function getOrCreateTag(tags, subaddress) {
-  if (!tags.hasOwnProperty(subaddress)) {
+  if (!Object.prototype.hasOwnProperty.call(tags, subaddress)) {
     try {
       const tag = GmailApp.createLabel(subaddress)
       console.log(`Created label: ${subaddress}`)

@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 function onOpen() {
   var ui = SpreadsheetApp.getUi()
   ui.createMenu('Drive Manager')
@@ -89,12 +90,11 @@ function addDataToSheet(sheet, files) {
       file.folder,
       file.shared,
       file.size,
-      '', // Columna para el desplegable de acciones
+      '',
     ]
   })
   sheet.getRange(2, 1, data.length, 7).setValues(data)
 
-  // Añadir el desplegable en la columna de acciones
   var actionRange = sheet.getRange(2, 7, data.length)
   var rule = SpreadsheetApp.newDataValidation()
     .requireValueInList(['Eliminar', 'Ver Detalles'], true)
@@ -115,7 +115,7 @@ function deleteFile(fileId) {
     if (response == ui.Button.YES) {
       file.setTrashed(true)
       ui.alert('Archivo eliminado con éxito.')
-      listFilesInDrive() // Actualiza la lista de archivos
+      listFilesInDrive()
     }
   } catch (e) {
     Logger.log('Error: ' + e.message)
@@ -129,10 +129,9 @@ function deleteMarkedFiles() {
   var ui = SpreadsheetApp.getUi()
   var filesToDelete = []
 
-  // Recorrer todas las filas y buscar archivos marcados con "Eliminar"
   for (var i = 1; i < data.length; i++) {
-    var action = data[i][6] // Columna F (índice 5)
-    var fileId = data[i][0] // Columna A (índice 0)
+    var action = data[i][6]
+    var fileId = data[i][0]
 
     if (action === 'Eliminar') {
       filesToDelete.push(fileId)
@@ -161,7 +160,7 @@ function deleteMarkedFiles() {
         }
       })
       Logger.log('Archivos eliminados con éxito.')
-      listFilesInDrive() // Actualiza la lista de archivos
+      listFilesInDrive()
     }
   } else {
     Logger.log('No hay archivos marcados para eliminar.')
