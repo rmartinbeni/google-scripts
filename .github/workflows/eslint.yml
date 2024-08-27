@@ -20,5 +20,5 @@ jobs:
         run: npm install
 
       - name: Run ESLint
-        run: npx eslint . --config eslint.config.js
+        run: npx eslint . --max-warnings 0 --config eslint.config.js
         continue-on-error: false
