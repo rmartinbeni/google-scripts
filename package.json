@@ -24,7 +24,7 @@
   },
   "scripts": {
     "push-email-tag": "cd gmail_plus_addressing_labeling && clasp push",
-    "push-google-drive-manager": "cd google_drive_manager  && clasp push"
+    "push-google-drive-manager": "cd google_drive_manager && clasp push"
   },
   "keywords": [
     "google-apps-script",
